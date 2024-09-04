@@ -13,14 +13,14 @@ class DeleteWatchedExtension extends Extension
         if (Versioned::get_stage() === Versioned::DRAFT) {
             // find all items being watched
             $watches = ItemWatch::get()->filter([
-                "WatchedClass" => get_class($this->owner),
-                "WatchedID" => $this->owner->ID,
+                "WatchedClass" => $this->getOwner()::class,
+                "WatchedID" => $this->getOwner()->ID,
             ]);
             try {
                 foreach ($watches as $watch) {
                     $watch->delete();
                 }
-            } catch (Exception $e) {
+            } catch (Exception) {
 
             }
 

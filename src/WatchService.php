@@ -14,7 +14,7 @@ use SilverStripe\ORM\DataList;
  */
 class WatchService
 {
-    public function webEnabledMethods()
+    public function webEnabledMethods(): array
     {
         return [
             'subscribe'		=> 'POST',
@@ -27,7 +27,7 @@ class WatchService
     {
         if ($item->canView()) {
             $current = $this->list($item, $type);
-            if (count($current)) {
+            if (count($current) !== 0) {
                 return $current->first();
             }
 
@@ -35,6 +35,7 @@ class WatchService
             $watch->write();
             return $watch;
         }
+        return null;
     }
 
     public function unsubscribe(DataObject $item)
@@ -43,10 +44,11 @@ class WatchService
         if (!$member) {
             return false;
         }
+
         if ($item->canView()) {
             $watch = ItemWatch::get()->filter([
                 'OwnerID'		=> $member->ID,
-                'WatchedClass'	=> get_class($item),
+                'WatchedClass'	=> $item::class,
                 'WatchedID'		=> $item->ID
             ])->first();
             if ($watch) {
@@ -54,6 +56,7 @@ class WatchService
                 return $watch;
             }
         }
+        return null;
     }
 
     /**
@@ -64,7 +67,7 @@ class WatchService
     {
         $member = Security::getCurrentUser();
         if (!$member) {
-            return new ArrayList();
+            return ArrayList::create();
         }
 
         $filter = [
@@ -76,7 +79,7 @@ class WatchService
         }
 
         if ($item && $item->canView()) {
-            $filter['WatchedClass'] = get_class($item);
+            $filter['WatchedClass'] = $item::class;
             $filter['WatchedID'] = $item->ID;
         }
 
@@ -96,17 +99,18 @@ class WatchService
         ]);
 
         $ids = $items->column('WatchedID');
-        if (count($ids)) {
-            return $type::get()->filter('ID', $ids)->filterByCallback(function ($item) {
-                return $item->canView();
-            });
+        if (count($ids) !== 0) {
+            return $type::get()->filter('ID', $ids)->filterByCallback(fn($item) => $item->canView());
         }
     }
 
-    public function watchersOf(DataObject $item, $type = null)
+    /**
+     * @return mixed[]
+     */
+    public function watchersOf(DataObject $item, $type = null): array
     {
         $filter = [
-            'WatchedClass' => get_class($item),
+            'WatchedClass' => $item::class,
             'WatchedID' => $item->ID,
         ];
 
@@ -119,13 +123,14 @@ class WatchService
         foreach ($watches as $watch) {
             $watchers[] = $watch->Owner();
         }
+
         return $watchers;
     }
 
     public function mostWatchedItems($filterBy = [], $number = 10)
     {
         $list = ItemWatch::get();
-        if (count($filterBy)) {
+        if (count($filterBy) !== 0) {
             $list = $list->filter($filterBy);
         }
 
@@ -149,10 +154,12 @@ class WatchService
             if ($object && $object->canView()) {
                 $objects->push($object);
             }
+
             if ($objects->count() >= $number) {
                 break;
             }
         }
+
         return $objects;
     }
 }

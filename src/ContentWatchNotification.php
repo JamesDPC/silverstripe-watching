@@ -8,7 +8,7 @@ use Symbiote\Notifications\Service\NotificationService;
 
 class ContentWatchNotification extends DataExtension
 {
-    private static $watch_types = [
+    private static array $watch_types = [
         \Page::class => 'watch',
     ];
 
@@ -27,18 +27,19 @@ class ContentWatchNotification extends DataExtension
         if ($this->notificationService) {
             $this->notificationService->notify(
                 'CONTENT_PUBLISHED',
-                $this->owner
+                $this->getOwner()
             );
 
-            if ($this->owner instanceof \Page && method_exists($this->owner, 'getSectionPage')) {
-                $section = $this->owner->getSectionPage();
-                if ($section && $section->ID != $this->owner->ID) {
-                    $link = $this->owner->AbsoluteLink();
+            // TODO clarity on what getSectionPage returns, could be dead code
+            if ($this->getOwner() instanceof \Page && $this->getOwner()->hasMethod('getSectionPage')) {
+                $section = $this->getOwner()->getSectionPage();
+                if ($section && $section->ID != $this->getOwner()->ID) {
+                    $link = $this->getOwner()->AbsoluteLink();
                     $this->notificationService->notify(
                         'SECTION_CONTENT_PUBLISHED',
                         $section,
                         [
-                            'InnerTitle' => $this->owner->Title,
+                            'InnerTitle' => $this->getOwner()->Title,
                             'InnerLink' => $link,
                             'Link' => $link,
                             'SectionLink' => $section->AbsoluteLink(),
@@ -49,23 +50,23 @@ class ContentWatchNotification extends DataExtension
         }
     }
 
-    public function getRecipients($identifier)
+    public function getRecipients($identifier): array
     {
         if ($this->watchService) {
-            $watchers = $this->watchService->watchersOf($this->owner, $this->getWatchType());
-            return $watchers;
+            return $this->watchService->watchersOf($this->getOwner(), $this->getWatchType());
         }
+        return [];
     }
 
     public function getWatchType()
     {
-        $type = get_class($this->owner);
+        $type = $this->getOwner()::class;
         $types = Config::inst()->get(ContentWatchNotification::class, 'watch_types');
 
         if (!isset($types[$type])) {
             $type = \Page::class;
         }
 
-        return isset($types[$type]) ? $types[$type] : '';
+        return $types[$type] ?? '';
     }
 }

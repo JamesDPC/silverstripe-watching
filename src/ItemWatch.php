@@ -12,26 +12,27 @@ use SilverStripe\Security\Security;
  */
 class ItemWatch extends DataObject
 {
-    private static $table_name = 'ItemWatch';
+    private static string $table_name = 'ItemWatch';
 
-    private static $db = [
+    private static array $db = [
         'Title' => 'Varchar(255)',
         'Type' => 'Varchar',
         'WatchData' => 'Text',
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'Watched' => DataObject::class,
         'Owner' => Member::class,
     ];
 
-    protected $watchedItem = null;
+    protected $watchedItem;
 
     public function getWatchedItem()
     {
         if (!$this->watchedItem) {
             $this->watchedItem = $this->Watched();
         }
+
         return $this->watchedItem;
     }
 
@@ -40,6 +41,7 @@ class ItemWatch extends DataObject
         if (!$member) {
             $member = Security::getCurrentUser();
         }
+
         $filter = [
             'WatchedClass' => $item->ClassName,
             'WatchedID' => $item->ID,

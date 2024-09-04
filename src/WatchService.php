@@ -35,6 +35,7 @@ class WatchService
             $watch->write();
             return $watch;
         }
+
         return null;
     }
 
@@ -56,6 +57,7 @@ class WatchService
                 return $watch;
             }
         }
+
         return null;
     }
 

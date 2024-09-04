@@ -55,6 +55,7 @@ class ContentWatchNotification extends DataExtension
         if ($this->watchService) {
             return $this->watchService->watchersOf($this->getOwner(), $this->getWatchType());
         }
+
         return [];
     }
 

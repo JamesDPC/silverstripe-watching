@@ -20,13 +20,27 @@
         }
     ],
     "require": {
-        "silverstripe/framework": "~4.0",
-        "symbiote/silverstripe-apiwrapper": "~1.0"
+        "silverstripe/framework": "^5",
+        "symbiote/silverstripe-apiwrapper": "*"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.0",
-        "phpunit/phpunit": "^5.7"
+        "cambis/silverstripe-rector": "^0.5.1",
+        "phpunit/phpunit": "^9.5",
+        "syntro/silverstripe-phpstan": "^5",
+        "nswdpc/ci-files": "^1",
+        "phpstan/phpstan": "~1.11.0"
     },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/nswdpc/ci-files.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/JamesDPC/silverstripe-apiwrapper.git"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Symbiote\\Watch\\": "src/"
@@ -38,13 +52,16 @@
         }
     },
     "extra": {
-        "branch-alias": {
-            "dev-master": "1.0.x-dev"
-        },
         "expose": [
           "client/script"
         ]
     },
     "prefer-stable": true,
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "silverstripe/vendor-plugin": true
+        }
+    }
 }

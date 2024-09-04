@@ -4,10 +4,8 @@ Name: item_watch_notifications
 SilverStripe\Core\Injector\Injector:
   Symbiote\Watch\ContentWatchNotification:
     properties:
-      watchService: %$Symbiote\Watch\WatchService
-      notificationService: %$Symbiote\Notifications\Service\NotificationService
-
-
+      watchService: '%$Symbiote\Watch\WatchService'
+      notificationService: '%$Symbiote\Notifications\Service\NotificationService'
 ---
 Name: content_watch_webservices
 ---
@@ -19,4 +17,4 @@ SilverStripe\Core\Injector\Injector:
   WatchServiceApiController:
     class: Symbiote\ApiWrapper\ServiceWrapperController
     properties:
-      service: %$Symbiote\Watch\WatchService
+      service: '%$Symbiote\Watch\WatchService'

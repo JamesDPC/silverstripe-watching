@@ -8,7 +8,8 @@ use SilverStripe\Versioned\Versioned;
 
 class DeleteWatchedExtension extends Extension
 {
-    public function onAfterDelete() {
+    public function onAfterDelete()
+    {
         if (Versioned::get_stage() === Versioned::DRAFT) {
             // find all items being watched
             $watches = ItemWatch::get()->filter([

@@ -3,7 +3,6 @@
 namespace Symbiote\Watch;
 
 use Symbiote\Watch\ItemWatch;
-
 use SilverStripe\Security\Member;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\ArrayList;
@@ -16,11 +15,11 @@ class WatchService
 {
     public function webEnabledMethods()
     {
-        return array(
+        return [
             'subscribe'		=> 'POST',
             'list'		    => 'GET',
             'unsubscribe'	=> 'POST',
-        );
+        ];
     }
 
     public function subscribe(DataObject $item, $type = 'watch')
@@ -44,11 +43,11 @@ class WatchService
             return false;
         }
         if ($item->canView()) {
-            $watch = ItemWatch::get()->filter(array(
+            $watch = ItemWatch::get()->filter([
                 'OwnerID'		=> $member->ID,
                 'WatchedClass'	=> get_class($item),
                 'WatchedID'		=> $item->ID
-            ))->first();
+            ])->first();
             if ($watch) {
                 $watch->delete();
                 return $watch;
@@ -90,10 +89,10 @@ class WatchService
             return [];
         }
 
-        $items = ItemWatch::get()->filter(array(
+        $items = ItemWatch::get()->filter([
             'OwnerID'			=> $member->ID,
             'WatchedClass'		=> $type,
-        ));
+        ]);
 
         $ids = $items->column('WatchedID');
         if (count($ids)) {

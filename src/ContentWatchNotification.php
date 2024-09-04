@@ -4,11 +4,12 @@ namespace Symbiote\Watch;
 
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Core\Config\Config;
+use Symbiote\Notifications\Service\NotificationService;
 
 class ContentWatchNotification extends DataExtension
 {
     private static $watch_types = [
-        Page::class => 'watch',
+        \Page::class => 'watch',
     ];
 
     /**
@@ -62,7 +63,7 @@ class ContentWatchNotification extends DataExtension
         $types = Config::inst()->get(ContentWatchNotification::class, 'watch_types');
 
         if (!isset($types[$type])) {
-            $type = Page::class;
+            $type = \Page::class;
         }
 
         return isset($types[$type]) ? $types[$type] : '';

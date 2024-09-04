@@ -5,6 +5,7 @@ namespace Symbiote\Watch;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataList;
 use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
 
 /**
  * @author marcus
@@ -37,7 +38,7 @@ class ItemWatch extends DataObject
     public function watch($item, $type = 'watch', $member = null)
     {
         if (!$member) {
-            $member = Member::currentUser();
+            $member = Security::getCurrentUser();
         }
         $filter = [
             'WatchedClass' => $item->ClassName,

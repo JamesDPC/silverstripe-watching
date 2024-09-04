@@ -4,6 +4,7 @@ namespace Symbiote\Watch;
 
 use Symbiote\Watch\ItemWatch;
 use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataList;
@@ -38,7 +39,7 @@ class WatchService
 
     public function unsubscribe(DataObject $item)
     {
-        $member = Member::currentUser();
+        $member = Security::getCurrentUser();
         if (!$member) {
             return false;
         }
@@ -61,7 +62,7 @@ class WatchService
      */
     public function list(DataObject $item = null, $type = null)
     {
-        $member = Member::currentUser();
+        $member = Security::getCurrentUser();
         if (!$member) {
             return new ArrayList();
         }
@@ -84,7 +85,7 @@ class WatchService
 
     public function watchedItemsOfType($type, $member = null)
     {
-        $member = $member ?: Member::currentUser();
+        $member = $member ?: Security::getCurrentUser();
         if (!$member) {
             return [];
         }

@@ -88,7 +88,7 @@ class WatchService
         return ItemWatch::get()->filter($filter);
     }
 
-    public function watchedItemsOfType(string $type, ?Member $member = null): ?ArrayList
+    public function watchedItemsOfType(string $type, ?Member $member = null, bool $canViewFilter = true): ArrayList|DataList|null
     {
         $member = $member ?: Security::getCurrentUser();
         if (!$member) {
@@ -102,7 +102,11 @@ class WatchService
 
         $ids = $items->column('WatchedID');
         if (count($ids) !== 0) {
-            return $type::get()->filter('ID', $ids)->filterByCallback(fn($item) => $item->canView());
+            $list = $type::get()->filter('ID', $ids);
+            if($canViewFilter) {
+                $list = $list->filterByCallback(fn($item) => $item->canView());
+            }
+            return $list;
         } else {
             return null;
         }

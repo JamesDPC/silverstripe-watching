@@ -22,7 +22,7 @@ class ContentWatchNotification extends DataExtension
      */
     public $notificationService;
 
-    public function onAfterPublish()
+    public function onAfterPublish(): void
     {
         if ($this->notificationService) {
             $this->notificationService->notify(
@@ -59,7 +59,7 @@ class ContentWatchNotification extends DataExtension
         return [];
     }
 
-    public function getWatchType()
+    public function getWatchType(): string
     {
         $type = $this->getOwner()::class;
         $types = Config::inst()->get(ContentWatchNotification::class, 'watch_types');

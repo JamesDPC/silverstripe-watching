@@ -23,7 +23,7 @@ class WatchService
         ];
     }
 
-    public function subscribe(DataObject $item, $type = 'watch')
+    public function subscribe(DataObject $item, string $type = 'watch'): ?ItemWatch
     {
         if ($item->canView()) {
             $current = $this->list($item, $type);
@@ -39,11 +39,11 @@ class WatchService
         return null;
     }
 
-    public function unsubscribe(DataObject $item)
+    public function unsubscribe(DataObject $item): ?ItemWatch
     {
         $member = Security::getCurrentUser();
         if (!$member) {
-            return false;
+            return null;
         }
 
         if ($item->canView()) {
@@ -65,7 +65,7 @@ class WatchService
      * List all the watches a user has, on a particular item,
      * and/or of a particular type
      */
-    public function list(DataObject $item = null, $type = null)
+    public function list(?DataObject $item = null, ?string $type = ''): ArrayList|DataList
     {
         $member = Security::getCurrentUser();
         if (!$member) {
@@ -76,7 +76,7 @@ class WatchService
             'OwnerID' => $member->ID,
         ];
 
-        if ($type) {
+        if ($type !== '') {
             $filter['Type'] = $type;
         }
 
@@ -88,11 +88,11 @@ class WatchService
         return ItemWatch::get()->filter($filter);
     }
 
-    public function watchedItemsOfType($type, $member = null)
+    public function watchedItemsOfType(string $type, ?Member $member = null): ?ArrayList
     {
         $member = $member ?: Security::getCurrentUser();
         if (!$member) {
-            return [];
+            return null;
         }
 
         $items = ItemWatch::get()->filter([
@@ -103,20 +103,22 @@ class WatchService
         $ids = $items->column('WatchedID');
         if (count($ids) !== 0) {
             return $type::get()->filter('ID', $ids)->filterByCallback(fn($item) => $item->canView());
+        } else {
+            return null;
         }
     }
 
     /**
      * @return mixed[]
      */
-    public function watchersOf(DataObject $item, $type = null): array
+    public function watchersOf(DataObject $item, string $type = ''): array
     {
         $filter = [
             'WatchedClass' => $item::class,
             'WatchedID' => $item->ID,
         ];
 
-        if ($type) {
+        if ($type !== '') {
             $filter['Type'] = $type;
         }
 
@@ -129,7 +131,7 @@ class WatchService
         return $watchers;
     }
 
-    public function mostWatchedItems($filterBy = [], $number = 10)
+    public function mostWatchedItems(array $filterBy = [], int $number = 10): ArrayList
     {
         $list = ItemWatch::get();
         if (count($filterBy) !== 0) {

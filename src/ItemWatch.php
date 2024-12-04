@@ -27,7 +27,7 @@ class ItemWatch extends DataObject
 
     protected $watchedItem;
 
-    public function getWatchedItem()
+    public function getWatchedItem(): ?DataObject
     {
         if (!$this->watchedItem) {
             $this->watchedItem = $this->Watched();
@@ -36,7 +36,7 @@ class ItemWatch extends DataObject
         return $this->watchedItem;
     }
 
-    public function watch($item, $type = 'watch', $member = null)
+    public function watch(DataObject $item, string $type = 'watch', ?Member $member = null): ?ItemWatch
     {
         if (!$member) {
             $member = Security::getCurrentUser();
@@ -66,14 +66,14 @@ class ItemWatch extends DataObject
         return $this;
     }
 
-    public function summaryFields()
+    public function summaryFields(): array
     {
         $fields = parent::summaryFields();
         $fields['ItemOverview'] = 'ItemOverview';
         return $fields;
     }
 
-    public function getItemOverview()
+    public function getItemOverview(): string
     {
         return $this->renderWith([
             $this->WatchedClass . '_watchoverview',
